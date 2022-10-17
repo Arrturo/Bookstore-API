@@ -9,12 +9,8 @@ media
 # Backup files #
 *.bak
 
-<<<<<<< HEAD
-.idea
-=======
 /.idea/
 /venv/
->>>>>>> 8156061389fe4281498dbc0cfe373516aee8327f
 
 # File-based project format
 *.iws

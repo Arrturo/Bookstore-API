@@ -1,13 +1,15 @@
 import datetime
-
 from rest_framework import serializers
 from .models import Book, Order, Author, Client, Genre
 
 
 class BookSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Book
-        fields = ['book_id', 'title', 'author', 'price', 'publisher', 'genre_genre', 'number_of_copies','year_of_publication']
+        fields = ['book_id', 'title', 'author', 'price', 'publisher', 'genre_genre', 'number_of_copies',
+                  'year_of_publication']
+
 
 
 class OrderSerializer(serializers.ModelSerializer):

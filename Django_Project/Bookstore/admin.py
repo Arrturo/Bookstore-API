@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from Django_Project.Bookstore.models import *
+from Bookstore.models import *
 
 # Register your models here.
 admin.site.register(Book)

@@ -19,4 +19,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Bookstore.urls')),
+<<<<<<< HEAD
+    path(r'^api-auth/', include('rest_framework.urls'))
+=======
+>>>>>>> origin/main
 ]

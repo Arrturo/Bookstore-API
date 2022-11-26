@@ -2,12 +2,20 @@ from django.db import models
 import datetime
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+<<<<<<< HEAD
+#Validation Functions
+def Date_validation(date:datetime):
+    if date > datetime.date.today():
+        raise ValidationError(_("Data nie może być nowsza niż dzisiejsza data."))
+
+=======
 
 #Validation Functions
 def Date_validation(date:datetime):
     if date > datetime.date.today():
         raise ValidationError(_("Data nie może być nowsza niż dzisiejsza data."))
 
+>>>>>>> origin/main
 def Price_validation(price):
     if price < 0:
         raise ValidationError(_("Cena nie może być wartością ujemną."))
@@ -15,8 +23,13 @@ def Price_validation(price):
     if round(price, 2) != price:
         raise ValidationError(_("Cena może być sprecyzowana do jednego grosza."))
 
+<<<<<<< HEAD
+def Name_validation(name: str):
+    x = str(name).replace(" ", "")
+=======
 def Name_validation(name:str):
     x = name.replace(" ", "")
+>>>>>>> origin/main
     if not x.isalpha():
         raise ValidationError(_("Dane mogą zwierać tylko litery."))
 

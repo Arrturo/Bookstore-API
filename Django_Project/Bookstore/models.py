@@ -15,8 +15,8 @@ def Price_validation(price):
     if round(price, 2) != price:
         raise ValidationError(_("Cena może być sprecyzowana do jednego grosza."))
 
-def Name_validation(name:str):
-    x = name.replace(" ", "")
+def Name_validation(name: str):
+    x = str(name).replace(" ", "")
     if not x.isalpha():
         raise ValidationError(_("Dane mogą zwierać tylko litery."))
 
@@ -41,6 +41,7 @@ class Order(models.Model):
     client_client = models.ForeignKey('Client', on_delete=models.SET_NULL, null=True)
     book_book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     purchase_date = models.DateField(validators=[Date_validation])
+    price = models.FloatField(validators=[Price_validation], null=True)
 
     def __str__(self):
         return self.client_client.title

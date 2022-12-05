@@ -162,6 +162,7 @@ class OrdersList(generics.ListCreateAPIView):
     name = 'Orders'
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
     filter_class = OrderFilter
 
     def get_object(self, pk):
@@ -226,4 +227,3 @@ class ApiRoot(generics.GenericAPIView):
 #     queryset = Order.objects.all()
 #     name = 'Orders'
 #     serializer_class = OrderSerializer
-

@@ -8,12 +8,14 @@ def Date_validation(date:datetime):
     if date > datetime.date.today():
         raise ValidationError(_("Data nie może być nowsza niż dzisiejsza data."))
 
+
 def Price_validation(price):
     if price < 0:
         raise ValidationError(_("Cena nie może być wartością ujemną."))
 
     if round(price, 2) != price:
         raise ValidationError(_("Cena może być sprecyzowana do jednego grosza."))
+
 
 def Name_validation(name: str):
     x = str(name).replace(" ", "")

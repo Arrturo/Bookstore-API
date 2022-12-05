@@ -64,6 +64,9 @@ class Client(models.Model):
     city = models.CharField(max_length=45, validators=[Name_validation])
     address = models.CharField(max_length=100)
 
+    class Meta:
+        ordering = ('last_name',)
+
     def __str__(self):
         return self.name
 

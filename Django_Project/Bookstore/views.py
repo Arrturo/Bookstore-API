@@ -22,7 +22,7 @@ class ReadOnly(BasePermission):
         return request.method in SAFE_METHODS
 
 
-class BookList(APIView):
+class BookList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Books'
     queryset = Book.objects.all()
@@ -53,7 +53,7 @@ class BookDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-class AuthorList(APIView):
+class AuthorList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Authors'
     queryset = Author.objects.all()
@@ -86,7 +86,7 @@ class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
     name = 'Author-detail'
 
 
-class GenreList(APIView):
+class GenreList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Genres'
     queryset = Genre.objects.all
@@ -117,11 +117,23 @@ class GenreDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GenreSerializer
     name = 'Genre-detail'
 
+
+class ClientFilter(FilterSet):
+    from_birthdate = DateTimeFilter(field_name='birth_date', lookup_expr='gte')
+    to_birthdate = DateTimeFilter(field_name='birth_date', lookup_expr='lte')
+
+    class Meta:
+        model = Client
+        fields = ['from_birthdate', 'to_birthdate']
+
+
 class ClientList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Clients'
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
+    filter_class = ClientFilter
+    ordering_fields = ['last_name', 'birth_date']
     def get_object(self, pk):
             try:
                 return Client.objects.get(pk=pk)
@@ -162,6 +174,7 @@ class OrdersList(generics.ListCreateAPIView):
     name = 'Orders'
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    ordering_fields = ['price', 'client_name']
 
     filter_class = OrderFilter
 

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
+from . import views
 from .views import *
 from django.contrib.admin.views.decorators import staff_member_required
 

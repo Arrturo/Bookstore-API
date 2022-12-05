@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Book, Order, Author, Client
-<<<<<<< HEAD
 from django.http import Http404
 from .serializers import *
 from rest_framework.views import APIView
@@ -11,7 +10,8 @@ from rest_framework import authentication, permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework.reverse import reverse
-
+from django.core.paginator import Paginator
+from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
 
 
 # Create your views here.
@@ -58,6 +58,7 @@ class AuthorList(APIView):
     name = 'Authors'
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    pagination = Paginator(queryset, 5)
 
     def get_object(self, pk):
         try:
@@ -90,6 +91,7 @@ class GenreList(APIView):
     name = 'Genres'
     queryset = Genre.objects.all
     serializer_class = GenreSerializer
+
     def get_object(self, pk):
             try:
                 return Genre.objects.get(pk=pk)
@@ -115,7 +117,7 @@ class GenreDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GenreSerializer
     name = 'Genre-detail'
 
-class ClientList(APIView):
+class ClientList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Clients'
     queryset = Client.objects.all()
@@ -144,11 +146,25 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClientSerializer
     name = 'Client-detail'
 
-class OrdersList(APIView):
+
+class OrderFilter(FilterSet):
+    min_price = NumberFilter(field_name='price', lookup_expr='gte')
+    max_price = NumberFilter(field_name='price', lookup_expr='lte')
+    client_name = AllValuesFilter(field_name='Order__client_client')
+
+    class Meta:
+        model = Order
+        fields = ['min_price', 'max_price', 'client_name']
+
+
+class OrdersList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Orders'
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    filter_class = OrderFilter
+
     def get_object(self, pk):
             try:
                 return Order.objects.get(pk=pk)
@@ -168,10 +184,13 @@ class OrdersList(APIView):
             return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = Order
     name = 'Order-detail'
+
 
 class ApiRoot(generics.GenericAPIView):
     name = 'api-root'
@@ -179,7 +198,8 @@ class ApiRoot(generics.GenericAPIView):
         return Response({'book-categories': reverse(GenreList.name, request=request),
                          'books': reverse(BookList.name, request=request),
                          'clients': reverse(ClientList.name, request=request),
-                         'orders': reverse(OrdersList.name, request=request)
+                         'orders': reverse(OrdersList.name, request=request),
+                         'authors': reverse(AuthorList.name, request=request)
 })
 
 
@@ -207,33 +227,3 @@ class ApiRoot(generics.GenericAPIView):
 #     queryset = Order.objects.all()
 #     name = 'Orders'
 #     serializer_class = OrderSerializer
-
-=======
-from .serializers import *
-# Create your views here.
-
-class BookList(generics.ListCreateAPIView):
-    queryset = Book.objects.all()
-    name = 'Books'
-    serializer_class = BookSerializer
-
-class AuthorList(generics.ListCreateAPIView):
-    queryset = Author.objects.all()
-    name = 'Authors'
-    serializer_class = AuthorSerializer
-
-class GenreList(generics.ListCreateAPIView):
-    queryset = Genre.objects.all()
-    name = 'Genres'
-    serializer_class = GenreSerializer
-
-class ClientList(generics.ListCreateAPIView):
-    queryset = Client.objects.all()
-    name = 'Clients'
-    serializer_class = ClientSerializer
-
-class OrdersList(generics.ListCreateAPIView):
-    queryset = Order.objects.all()
-    name = 'Orders'
-    serializer_class = OrderSerializer
->>>>>>> origin/main

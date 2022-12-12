@@ -82,6 +82,3 @@ class Genre(models.Model):
     genre = models.CharField(max_length=50, validators=[Name_validation])
     def __str__(self):
         return self.genre
-    
-    def __str__(self) -> str:
-        return self.genre

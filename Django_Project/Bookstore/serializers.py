@@ -1,6 +1,6 @@
 import datetime
 from rest_framework import serializers
-from .models import Book, Order, Author, Client, Genre
+from .models import Book, Order, Author, Client, Genre, Section
 
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
@@ -40,3 +40,9 @@ class GenreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Genre
         fields = ['genre_id', 'genre']
+
+
+class SectionSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Section
+        fields = ['section_id', 'section_name']

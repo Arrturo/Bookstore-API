@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework.reverse import reverse
 from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
-
+from .customperm import IsCurrentUserOwnerOrReadOnly
 
 # Create your views here.
 
@@ -136,7 +136,8 @@ class ClientList(generics.ListCreateAPIView):
     name = 'Clients'
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    filter_class = ClientFilter
+    search_fields = ['name', 'last_name']
+    filterset_class = ClientFilter
     ordering_fields = ['last_name', 'birth_date']
 
     # def get_object(self, pk):
@@ -168,7 +169,7 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
 class OrderFilter(FilterSet):
     min_price = NumberFilter(field_name='price', lookup_expr='gte')
     max_price = NumberFilter(field_name='price', lookup_expr='lte')
-    client_name = AllValuesFilter(field_name='Order__client_client')
+    client_name = AllValuesFilter(field_name='client_client')
 
     class Meta:
         model = Order
@@ -176,13 +177,15 @@ class OrderFilter(FilterSet):
 
 
 class OrdersList(generics.ListCreateAPIView):
-    permission_classes = [IsAdminUser | ReadOnly]
+    permission_classes = [IsAuthenticated | ReadOnly]
     name = 'Orders'
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     ordering_fields = ['price', 'client_name']
 
-    filter_class = OrderFilter
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+    filterset_class = OrderFilter
 
     # def get_object(self, pk):
     #         try:

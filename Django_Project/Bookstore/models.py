@@ -46,7 +46,7 @@ class Order(models.Model):
     price = models.FloatField(validators=[Price_validation], null=True)
 
     def __str__(self):
-        return self.client_client.title
+        return self.client_client.name
 
 class Author(models.Model):
     author_id = models.AutoField(primary_key=True)

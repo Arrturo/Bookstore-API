@@ -1,16 +1,9 @@
-from django.shortcuts import render
 from rest_framework import generics
-from .models import Book, Order, Author, Client
-from django.http import Http404
 from .serializers import *
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import authentication, permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework.reverse import reverse
-from django.core.paginator import Paginator
 from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
 
 
@@ -22,28 +15,40 @@ class ReadOnly(BasePermission):
         return request.method in SAFE_METHODS
 
 
+class BookFilter(FilterSet):
+    from_price = NumberFilter(field_name="price", lookup_expr='gte')
+    to_price = NumberFilter(field_name="price", lookup_expr='lte')
+    class Meta:
+        model = Book
+        fields = ['from_price', 'to_price', 'title', 'author', 'price', 'genre_genre']
+
 class BookList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Books'
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    filterset_class = BookFilter
+    search_fields = ['title']
+    ordering_fields = ['title', 'author']
 
-    def get_object(self, pk):
-        try:
-            return Book.objects.get(id=pk)
-        except Book.DoesNotExist:
-            raise Http404
 
-    def get(self, request, Format=None):
-        Books = Book.objects.all()
-        Serializer = BookSerializer(Books, many=True)
-        return Response(Serializer.data)
-    def post(self, request, Format=None):
-        Serializer = BookSerializer(data=request.data)
-        if Serializer.is_valid():
-            Serializer.save()
-            return Response(Serializer.data, status=status.HTTP_201_CREATED)
-        return Response(Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def get_object(self, pk):
+    #     try:
+    #         return Book.objects.get(id=pk)
+    #     except Book.DoesNotExist:
+    #         raise Http404
+    #
+    # def get(self, request, Format=None):
+    #     Books = Book.objects.all()
+    #     Serializer = BookSerializer(Books, many=True)
+    #     return Response(Serializer.data)
+    #
+    # def post(self, request, Format=None):
+    #     Serializer = BookSerializer(data=request.data)
+    #     if Serializer.is_valid():
+    #         Serializer.save()
+    #         return Response(Serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -58,26 +63,26 @@ class AuthorList(generics.ListCreateAPIView):
     name = 'Authors'
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    pagination = Paginator(queryset, 5)
+    search_fields = ['name', 'last_name']
+    ordering_fields = ['name', 'last_name']
 
-    def get_object(self, pk):
-        try:
-            return Author.objects.get(pk=pk)
-        except Author.DoesNotExist:
-            raise Http404
-
-    def get(self, request, format=None):
-        Authors = Author.objects.all()
-        Serializer = AuthorSerializer(Authors, many=True)
-        return Response(Serializer.data)
-
-    def post(self, request, format=None):
-        Serializer = AuthorSerializer(data=request.data)
-        if Serializer.is_valid():
-            Serializer.save()
-            return Response(Serializer.data, status=status.HTTP_201_CREATED)
-        return Response(Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    # def get_object(self, pk):
+    #     try:
+    #         return Author.objects.get(pk=pk)
+    #     except Author.DoesNotExist:
+    #         raise Http404
+    #
+    # def get(self, request, format=None):
+    #     Authors = Author.objects.all()
+    #     Serializer = AuthorSerializer(Authors, many=True)
+    #     return Response(Serializer.data)
+    #
+    # def post(self, request, format=None):
+    #     Serializer = AuthorSerializer(data=request.data)
+    #     if Serializer.is_valid():
+    #         Serializer.save()
+    #         return Response(Serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -89,27 +94,26 @@ class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
 class GenreList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     name = 'Genres'
-    queryset = Genre.objects.all
+    queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
-    def get_object(self, pk):
-            try:
-                return Genre.objects.get(pk=pk)
-            except Genre.DoesNotExist:
-                raise Http404
-
-    def get(self, request, format=None):
-            Genres = Genre.objects.all()
-            Serializer = GenreSerializer(Genres, many=True)
-            return Response(Serializer.data)
-
-    def post(self, request, format=None):
-            Serializers = GenreSerializer(data=request.data)
-            if Serializers.is_valid():
-                Serializers.save()
-                return Response(Serializers.data, status=status.HTTP_201_CREATED)
-            return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    # def get_object(self, pk):
+    #     try:
+    #         return Genre.objects.get(pk=pk)
+    #     except Genre.DoesNotExist:
+    #         raise Http404
+    #
+    # def get(self, request, format=None):
+    #     Genres = Genre.objects.all()
+    #     Serializer = GenreSerializer(Genres, many=True)
+    #     return Response(Serializer.data)
+    #
+    # def post(self, request, format=None):
+    #     Serializers = GenreSerializer(data=request.data)
+    #     if Serializers.is_valid():
+    #         Serializers.save()
+    #         return Response(Serializers.data, status=status.HTTP_201_CREATED)
+    #     return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GenreDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -134,23 +138,25 @@ class ClientList(generics.ListCreateAPIView):
     serializer_class = ClientSerializer
     filter_class = ClientFilter
     ordering_fields = ['last_name', 'birth_date']
-    def get_object(self, pk):
-            try:
-                return Client.objects.get(pk=pk)
-            except Client.DoesNotExist:
-                raise Http404
 
-    def get(self, request, format=None):
-            Clients = Client.objects.all()
-            Serializer = ClientSerializer(Clients, many=True)
-            return Response(Serializer.data)
+    # def get_object(self, pk):
+    #         try:
+    #             return Client.objects.get(pk=pk)
+    #         except Client.DoesNotExist:
+    #             raise Http404
+    #
+    # def get(self, request, format=None):
+    #         Clients = Client.objects.all()
+    #         Serializer = ClientSerializer(Clients, many=True)
+    #         return Response(Serializer.data)
+    #
+    # def post(self, request, format=None):
+    #         Serializers = ClientSerializer(data=request.data)
+    #         if Serializers.is_valid():
+    #             Serializers.save()
+    #             return Response(Serializers.data, status=status.HTTP_201_CREATED)
+    #         return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, format=None):
-            Serializers = ClientSerializer(data=request.data)
-            if Serializers.is_valid():
-                Serializers.save()
-                return Response(Serializers.data, status=status.HTTP_201_CREATED)
-            return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
@@ -178,25 +184,23 @@ class OrdersList(generics.ListCreateAPIView):
 
     filter_class = OrderFilter
 
-    def get_object(self, pk):
-            try:
-                return Order.objects.get(pk=pk)
-            except Order.DoesNotExist:
-                raise Http404
-
-    def get(self, request, format=None):
-            Orders = Order.objects.all()
-            Serializer = OrderSerializer(Orders, many=True)
-            return Response(Serializer.data)
-
-    def post(self, request, format=None):
-            Serializers = OrderSerializer(data=request.data)
-            if Serializers.is_valid():
-                Serializers.save()
-                return Response(Serializers.data, status=status.HTTP_201_CREATED)
-            return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    # def get_object(self, pk):
+    #         try:
+    #             return Order.objects.get(pk=pk)
+    #         except Order.DoesNotExist:
+    #             raise Http404
+    #
+    # def get(self, request, format=None):
+    #         Orders = Order.objects.all()
+    #         Serializer = OrderSerializer(Orders, many=True)
+    #         return Response(Serializer.data)
+    #
+    # def post(self, request, format=None):
+    #         Serializers = OrderSerializer(data=request.data)
+    #         if Serializers.is_valid():
+    #             Serializers.save()
+    #             return Response(Serializers.data, status=status.HTTP_201_CREATED)
+    #         return Response(Serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -216,10 +220,7 @@ class ApiRoot(generics.GenericAPIView):
 })
 
 
-# class BookList(generics.ListCreateAPIView):
-#     queryset = Book.objects.all()
-#     name = 'Books'
-#     serializer_class = BookSerializer
+
 #
 # class AuthorList(generics.ListCreateAPIView):
 #     queryset = Author.objects.all()

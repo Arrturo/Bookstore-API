@@ -42,7 +42,7 @@ class GenreSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['genre_id', 'genre']
 
 
-class SectionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Section
-        fields = ['section_id', 'section_name']
+# class SectionSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = Section
+#         fields = ['section_id', 'section_name']

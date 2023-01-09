@@ -44,6 +44,7 @@ class Order(models.Model):
     book_book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
     purchase_date = models.DateField(validators=[Date_validation])
     price = models.FloatField(validators=[Price_validation], null=True)
+    owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.client_client.name

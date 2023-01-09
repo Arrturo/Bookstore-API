@@ -16,14 +16,14 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     book_book = serializers.SlugRelatedField(queryset=Book.objects.all(), slug_field='title')
     client_client = serializers.SlugRelatedField(queryset=Client.objects.all(), slug_field='name')
-
+    owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Order
-        fields = ['order_id', 'book_book', 'client_client', 'purchase_date', 'price']
+        fields = ['order_id', 'book_book', 'client_client', 'purchase_date', 'price', 'owner']
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
-    books = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='book-detail')
+    books = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='bookDetail')
 
     class Meta:
         model = Author
@@ -31,9 +31,10 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ClientSerializer(serializers.HyperlinkedModelSerializer):
+    orders = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='orderDetail')
     class Meta:
         model = Client
-        fields = ['client_id', 'name', 'last_name', 'birth_date', 'city', 'address']
+        fields = ['client_id', 'name', 'last_name', 'birth_date', 'city', 'address', 'orders']
 
 
 class GenreSerializer(serializers.HyperlinkedModelSerializer):

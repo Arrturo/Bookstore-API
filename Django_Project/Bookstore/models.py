@@ -46,7 +46,7 @@ class Order(models.Model):
     price = models.FloatField(validators=[Price_validation], null=True)
 
     def __str__(self):
-        return self.client_client.title
+        return self.client_client.name
 
 class Author(models.Model):
     author_id = models.AutoField(primary_key=True)
@@ -81,7 +81,4 @@ class Genre(models.Model):
     genre_id = models.AutoField(primary_key=True)
     genre = models.CharField(max_length=50, validators=[Name_validation])
     def __str__(self):
-        return self.genre
-    
-    def __str__(self) -> str:
         return self.genre

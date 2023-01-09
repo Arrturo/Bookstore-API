@@ -1,0 +1,75 @@
+# 1 mutacja
+# mutation{
+#  createGenre:createGenre(genre: "Kryminal") {
+#   genre{
+#    genreId
+#    genre
+#   }
+#  }
+# }
+
+# 2 mutacja
+# mutation{
+#  createAuthor:createAuthor(name: "Antoni", lastName: "Ćwir") {
+#   author{
+#    authorId
+#    name
+#   lastName
+#   }
+#  }
+# }
+
+# 3 mutacja
+# mutation{
+#  deleteAuthor:deleteAuthor(authorId: 4) {
+#   author{
+#    authorId
+#    name
+#   lastName
+#   }
+#  }
+# }
+
+# 4 mutacja
+# mutation{
+#   update_book: updateBook(bookId: 1, numberOfCopies: 33){
+#     book{
+#       bookId
+#       numberOfCopies
+#     }
+#   }
+# }
+
+# 1 zapytanie
+# {
+#   genres{
+#     genreId
+#     genre
+#   }
+# }
+
+# 2 zapytanie
+# {
+#   authors{
+#   	authorId
+#   	name
+#   	lastName
+# 	}
+# }
+
+# 3 zapytanie
+# {
+#   books{
+#     bookId
+#     title
+#     author{
+#       name
+#       lastName
+#     }
+#     numberOfCopies
+#     genreGenre{
+#       genre
+#     }
+    
+#   }
+# }

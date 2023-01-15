@@ -1,6 +1,6 @@
 import graphene
 from graphene_django import DjangoObjectType
-from .models import Book, Author, Genre
+from .models import Book, Author, Genre, Order, Client
 
 
 class BookType(DjangoObjectType):
@@ -38,10 +38,37 @@ class GenreType(DjangoObjectType):
         )
 
 
+class OrderType(DjangoObjectType):
+    class Meta:
+        model = Order
+        fields = (
+            'order_id',
+            'client_client',
+            'book_book',
+            'purchase_date',
+            'price',
+        )
+
+
+class ClientType(DjangoObjectType):
+    class Meta:
+        model = Client
+        fields = (
+            'client_id',
+            'name',
+            'last_name',
+            'birthdate',
+            'city',
+            'address',
+        )
+
+
 class Query(graphene.ObjectType):
     books = graphene.List(BookType)
     authors = graphene.List(AuthorType)
     genres = graphene.List(GenreType)
+    orders = graphene.List(OrderType)
+    clients = graphene.List(ClientType)
 
     def resolve_books(self, info, **kwargs):
         return Book.objects.all()
@@ -51,6 +78,12 @@ class Query(graphene.ObjectType):
 
     def resolve_genres(self, info, **kwargs):
         return Genre.objects.all()
+
+    def resolve_orders(self, info, **kwargs):
+        return Order.objects.all()
+
+    def resolve_clients(self, info, **kwargs):
+        return Client.objects.all()
 
 
 class BookInput(graphene.InputObjectType):
@@ -66,8 +99,8 @@ class BookInput(graphene.InputObjectType):
 
 class UpdateBook(graphene.Mutation):
     class Arguments:
-        input = BookInput(required=True)
-        book_id = graphene.Int(required=True)
+        book_id = graphene.ID()
+        input = BookInput(required=False)
 
     book = graphene.Field(BookType)
 
@@ -88,7 +121,7 @@ class UpdateBook(graphene.Mutation):
 
 class CreateBook(graphene.Mutation):
     class Arguments:
-        input = BookInput(required=True)
+        input = BookInput(required=False)
 
     book = graphene.Field(BookType)
 
@@ -109,7 +142,7 @@ class CreateBook(graphene.Mutation):
 
 class DeleteBook(graphene.Mutation):
     class Arguments:
-        book_id = graphene.Int(required=True)
+        book_id = graphene.ID()
 
     book = graphene.Field(BookType)
 
@@ -122,14 +155,14 @@ class DeleteBook(graphene.Mutation):
 class UpdateGenre(graphene.Mutation):
     class Arguments:
         genre_id = graphene.ID()
-        genre = graphene.String()
+        genre_name = graphene.String()
 
     genre = graphene.Field(GenreType)
 
     @classmethod
-    def mutate(cls, root, info, genre_id, genre):
+    def mutate(cls, root, info, genre_id, genre_name):
         genre = Genre.objects.get(pk=genre_id)
-        genre.genre = genre
+        genre.genre = genre_name
         genre.save()
 
         return UpdateGenre(genre=genre)
@@ -208,15 +241,134 @@ class DeleteAuthor(graphene.Mutation):
         author.delete()
 
 
+class OrderInput(graphene.InputObjectType):
+    client_client = graphene.String()
+    book_book = graphene.String()
+    purchase_date = graphene.Date()
+    price = graphene.Float()
+
+
+class CreateOrder(graphene.Mutation):
+    class Arguments:
+        input = OrderInput(required=True)
+
+    order = graphene.Field(OrderType)
+
+    @classmethod
+    def mutate(cls, root, info, input):
+        order = Order()
+        order.client_client = input.client_client,
+        order.book_book = input.book_book,
+        order.purchase_date = input.purchase_date,
+        order.price = input.price,
+
+        order.save()
+        return CreateOrder(order=order)
+
+
+class UpdateOrder(graphene.Mutation):
+    class Arguments:
+        order_id = graphene.ID()
+        input = OrderInput(required=False)
+
+    order = graphene.Field(OrderType)
+
+    @classmethod
+    def mutate(cls, root, info, order_id, input):
+        order = Order.objects.get(order_id=order_id)
+        order.client_client = input.client_client,
+        order.book_book = input.book_book,
+        order.purchase_date = input.purchase_date,
+        order.price = input.price,
+
+        order.save()
+        return UpdateOrder(order=order)
+
+
+class DeleteOrder(graphene.Mutation):
+    class Arguments:
+        order_id = graphene.ID()
+
+    order = graphene.Field(OrderType)
+
+    @classmethod
+    def mutate(cls, root, info, order_id):
+        order = Order.objects.get(pk=order_id)
+        order.delete()
+
+
+class CreateClient(graphene.Mutation):
+    class Arguments:
+        name = graphene.String()
+        last_name = graphene.String()
+        email = graphene.String()
+        phone = graphene.String()
+
+    client = graphene.Field(ClientType)
+
+    @classmethod
+    def mutate(cls, root, info, name, last_name, email, phone):
+        client = Client()
+        client.name = name
+        client.last_name = last_name
+        client.email = email
+        client.phone = phone
+        client.save()
+        return CreateClient(client=client)
+
+
+class UpdateClient(graphene.Mutation):
+    class Arguments:
+        client_id = graphene.ID()
+        name = graphene.String()
+        last_name = graphene.String()
+        email = graphene.String()
+        phone = graphene.String()
+
+    client = graphene.Field(ClientType)
+
+    @classmethod
+    def mutate(cls, root, info, client_id, name, last_name, email, phone):
+        client = Client.objects.get(pk=client_id)
+        client.name = name
+        client.last_name = last_name
+        client.email = email
+        client.phone = phone
+        client.save()
+        return UpdateClient(client=client)
+
+
+class DeleteClient(graphene.Mutation):
+    class Arguments:
+        client_id = graphene.ID()
+
+    client = graphene.Field(ClientType)
+
+    @classmethod
+    def mutate(cls, root, info, client_id):
+        client = Client.objects.get(pk=client_id)
+        client.delete()
+
 class Mutation(graphene.ObjectType):
     update_book = UpdateBook.Field()
     create_book = CreateBook.Field()
     delete_book = DeleteBook.Field()
+
     update_genre = UpdateGenre.Field()
     create_genre = CreateGenre.Field()
     delete_genre = DeleteGenre.Field()
+
     update_author = UpdateAuthor.Field()
     create_author = CreateAuthor.Field()
     delete_author = DeleteAuthor.Field()
+
+    create_order = CreateOrder.Field()
+    update_order = UpdateOrder.Field()
+    delete_order = DeleteOrder.Field()
+
+    create_client = CreateClient.Field()
+    update_client = UpdateClient.Field()
+    delete_client = DeleteClient.Field()
+
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

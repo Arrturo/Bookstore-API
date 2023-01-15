@@ -52,3 +52,29 @@ class Genre(models.Model):
     genre = models.CharField(max_length=50, validators=[Name_validation])
     def __str__(self):
         return self.genre
+
+
+class Order(models.Model):
+    order_id = models.AutoField(primary_key=True)
+    client_client = models.ForeignKey('Client', on_delete=models.SET_NULL, null=True)
+    book_book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
+    purchase_date = models.DateField(validators=[Date_validation])
+    price = models.FloatField(validators=[Price_validation], null=True)
+
+    def __str__(self):
+        return self.client_client.name
+
+
+class Client(models.Model):
+    client_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=45, validators=[Name_validation])
+    last_name = models.CharField(max_length=45, validators=[Name_validation])
+    birthdate = models.DateField(validators=[Date_validation])
+    city = models.CharField(max_length=45, validators=[Name_validation])
+    address = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ('last_name',)
+
+    def __str__(self):
+        return self.name

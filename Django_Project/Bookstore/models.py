@@ -40,14 +40,13 @@ class Book(models.Model):
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
-    client_client = models.ForeignKey('Client', on_delete=models.SET_NULL, null=True)
-    book_book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
+    book_info = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     purchase_date = models.DateField(validators=[Date_validation])
-    price = models.FloatField(validators=[Price_validation], null=True)
     owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.client_client.name
+        return self.owner
+
 
 class Author(models.Model):
     author_id = models.AutoField(primary_key=True)
@@ -56,6 +55,7 @@ class Author(models.Model):
 
     def __str__(self):
         return self.name + ' ' + self.last_name
+
 
 class Client(models.Model):
     client_id = models.AutoField(primary_key=True)
@@ -71,12 +71,14 @@ class Client(models.Model):
     def __str__(self):
         return self.name
 
+
 class Section(models.Model):
     section_id = models.AutoField(primary_key=True)
     section_name = models.CharField(max_length=45)
 
     def __str__(self):
         return self.section_name
+
 
 class Genre(models.Model):
     genre_id = models.AutoField(primary_key=True)

@@ -1,13 +1,14 @@
 from rest_framework import generics
 from .serializers import *
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
 from rest_framework.reverse import reverse
 from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
-from .customperm import IsCurrentUserOwnerOrReadOnly
+from .customperm import IsCurrentUserOwnerOrReadOnly, CurrentUserOwnerReadOnlyOrDenied
 
 # Create your views here.
+
 
 
 class ReadOnly(BasePermission):
@@ -21,6 +22,7 @@ class BookFilter(FilterSet):
     class Meta:
         model = Book
         fields = ['from_price', 'to_price', 'title', 'author', 'price', 'genre_genre']
+
 
 class BookList(generics.ListCreateAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
@@ -52,10 +54,10 @@ class BookList(generics.ListCreateAPIView):
 
 
 class BookDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser | ReadOnly]
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     name = 'book-detail'
-
 
 
 class AuthorList(generics.ListCreateAPIView):
@@ -86,9 +88,10 @@ class AuthorList(generics.ListCreateAPIView):
 
 
 class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser | ReadOnly]
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    name = 'Author-detail'
+    name = 'author-detail'
 
 
 class GenreList(generics.ListCreateAPIView):
@@ -117,9 +120,10 @@ class GenreList(generics.ListCreateAPIView):
 
 
 class GenreDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser | ReadOnly]
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    name = 'Genre-detail'
+    name = 'genre-detail'
 
 
 class ClientFilter(FilterSet):
@@ -163,13 +167,13 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser | ReadOnly]
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    name = 'Client-detail'
+    name = 'client-detail'
 
 
 class OrderFilter(FilterSet):
     min_price = NumberFilter(field_name='price', lookup_expr='gte')
     max_price = NumberFilter(field_name='price', lookup_expr='lte')
-    client_name = AllValuesFilter(field_name='client_client')
+    client_name = AllValuesFilter(field_name='owner')
 
     class Meta:
         model = Order
@@ -177,15 +181,21 @@ class OrderFilter(FilterSet):
 
 
 class OrdersList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated | ReadOnly]
-    name = 'Orders'
+    permission_classes = [IsAdminUser | CurrentUserOwnerReadOnlyOrDenied]
+    name = 'orders'
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    ordering_fields = ['price', 'client_name']
+    ordering_fields = ['client_name']
+    filterset_class = OrderFilter
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Order.objects.all()
+
+        return Order.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-    filterset_class = OrderFilter
 
     # def get_object(self, pk):
     #         try:
@@ -207,9 +217,10 @@ class OrdersList(generics.ListCreateAPIView):
 
 
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser | CurrentUserOwnerReadOnlyOrDenied]
     queryset = Order.objects.all()
-    serializer_class = Order
-    name = 'Order-detail'
+    serializer_class = OrderSerializer
+    name = 'order-detail'
 
 
 class ApiRoot(generics.GenericAPIView):

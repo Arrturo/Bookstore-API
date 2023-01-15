@@ -1,5 +1,6 @@
 import datetime
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Book, Order, Author, Client, Genre, Section
 
 
@@ -9,38 +10,67 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Book
+        fields = ['url', 'book_id', 'title', 'author', 'price', 'publisher', 'genre_genre', 'number_of_copies', 'year_of_publication']
 
-        fields = ['book_id', 'title', 'author', 'price', 'publisher', 'genre_genre', 'number_of_copies', 'year_of_publication']
+
+class TitlePriceField(serializers.SlugRelatedField):
+    def to_representation(self, obj):
+        return f"{obj.title} price: {obj.price}"
+
+    def to_internal_value(self, data):
+        title = data.split("price:")[0].strip()
+        obj = self.get_queryset().filter(title=title).first()
+        if obj is None:
+            raise serializers.ValidationError("Invalid title")
+        return obj
 
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
-    book_book = serializers.SlugRelatedField(queryset=Book.objects.all(), slug_field='title')
-    client_client = serializers.SlugRelatedField(queryset=Client.objects.all(), slug_field='name')
+    book_info = TitlePriceField(queryset=Book.objects.all(), slug_field='title')
+    purchase_date = serializers.DateField(default=datetime.datetime.now(), read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
+
+    def create(self, validated_data):
+        validated_data['purchase_date'] = datetime.datetime.now().date()
+        return super().create(validated_data)
+
     class Meta:
         model = Order
-        fields = ['order_id', 'book_book', 'client_client', 'purchase_date', 'price', 'owner']
+        fields = ['url', 'order_id', 'purchase_date', 'owner', 'book_info']
+
+
+class UserOrderSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['url', 'order_id', 'book_book', 'purchase_date', 'price','owner']
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    orders = UserOrderSerializer(many=True, read_only=True)
+    class Meta:
+        model = User
+        fields = ['url', 'pk', 'username', 'book']
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
-    books = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='bookDetail')
+    authors = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='authorDetail')
 
     class Meta:
         model = Author
-        fields = ['author_id', 'name', 'last_name', 'books']
+        fields = ['url', 'author_id', 'name', 'last_name', 'authors']
 
 
 class ClientSerializer(serializers.HyperlinkedModelSerializer):
     orders = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='orderDetail')
     class Meta:
         model = Client
-        fields = ['client_id', 'name', 'last_name', 'birth_date', 'city', 'address', 'orders']
+        fields = ['url', 'client_id', 'name', 'last_name', 'birth_date', 'city', 'address', 'orders']
 
 
 class GenreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Genre
-        fields = ['genre_id', 'genre']
+        fields = ['url', 'genre_id', 'genre']
 
 
 # class SectionSerializer(serializers.HyperlinkedModelSerializer):

@@ -171,13 +171,11 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OrderFilter(FilterSet):
-    min_price = NumberFilter(field_name='price', lookup_expr='gte')
-    max_price = NumberFilter(field_name='price', lookup_expr='lte')
     client_name = AllValuesFilter(field_name='owner')
 
     class Meta:
         model = Order
-        fields = ['min_price', 'max_price', 'client_name']
+        fields = ['client_name']
 
 
 class OrdersList(generics.ListCreateAPIView):
@@ -191,8 +189,8 @@ class OrdersList(generics.ListCreateAPIView):
     def get_queryset(self):
         if self.request.user.is_staff:
             return Order.objects.all()
-
-        return Order.objects.filter(owner=self.request.user)
+        else:
+            return Order.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

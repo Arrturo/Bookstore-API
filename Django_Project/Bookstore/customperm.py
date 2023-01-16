@@ -18,7 +18,7 @@ class CurrentUserOwnerReadOnlyOrDenied(permissions.BasePermission):
         if obj.owner == request.user:
             if request.method in permissions.SAFE_METHODS:
                 return True
-            if request.request.user.is_superuser:
+            if request.user.is_superuser:
                 return True
 
         return False

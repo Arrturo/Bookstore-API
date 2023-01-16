@@ -1,0 +1,146 @@
+# Welcome to GraphiQL
+#
+# GraphiQL is an in-browser tool for writing, validating, and
+# testing GraphQL queries.
+#
+# Type queries into this side of the screen, and you will see intelligent
+# typeaheads aware of the current GraphQL type schema and live syntax and
+# validation errors highlighted within the text.
+#
+# GraphQL queries typically start with a "{" character. Lines that start
+# with a # are ignored.
+#
+# An example GraphQL query might look like:
+#
+#     {
+#       field(arg: "value") {
+#         subField
+#       }
+#     }
+#
+# Keyboard shortcuts:
+#
+#  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)
+#
+#     Merge Query:  Shift-Ctrl-M (or press the merge button above)
+#
+#       Run Query:  Ctrl-Enter (or press the play button above)
+#
+#   Auto Complete:  Ctrl-Space (or just start typing)
+#
+
+# 1 mutacja
+# mutation{
+#  createGenre:createGenre(genre: "Kryminal") {
+#   genre{
+#    genreId
+#    genre
+#   }
+#  }
+# }
+
+# 2 mutacja
+# mutation{
+#  createAuthor:createAuthor(name: "Marek", lastName: "Jaworek") {
+#   author{
+#    authorId
+#    name
+#   lastName
+#   }
+#  }
+# }
+
+# 3 mutacja
+# mutation{
+#  deleteAuthor:deleteAuthor(authorId: 6) {
+#   author{
+#    authorId
+#    name
+#   lastName
+#   }
+#  }
+# }
+
+# 4 mutacja
+# mutation{
+# 	updateAuthor(authorId:7, name:"Jacek", lastName: "Boberek"){
+#     author{
+#       authorId
+#       name
+#       lastName
+#     }
+#   }
+# }
+
+# 5 mutacja
+# mutation{
+#   updateGenre(genreId: 5, genreName: "Nowela"){
+#     genre{
+#       genreId
+#       genre
+#     }
+#   }
+# }
+
+# 1 zapytanie
+# {
+# 	orders{
+#     orderId
+#     clientClient{
+#       name
+#       lastName
+#     }
+#     price
+#   }
+# }
+
+# 2 zapytanie
+# {
+# 	books{
+#     title
+#     price
+#     author{
+#       name
+#       lastName
+#     }
+#   }
+# }
+
+# 3 zapytanie
+# {
+#   books{
+#     bookId
+#     title
+#     author{
+#       name
+#       lastName
+#     }
+#     numberOfCopies
+#   }
+# }
+
+# 4 zapytanie
+# {
+#   orders{
+#     orderId
+#     bookBook{
+#       title
+#       publisher
+#     }
+#     purchaseDate
+#   }
+# }
+
+# 5 zapytanie
+# {
+#   books{
+#     title
+#     description
+#     publisher
+#     numberOfCopies
+#     yearOfPublication
+#     genreGenre{
+#       genre
+#     }
+#   }
+# }

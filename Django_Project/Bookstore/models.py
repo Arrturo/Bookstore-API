@@ -2,20 +2,13 @@ from django.db import models
 import datetime
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-<<<<<<< HEAD
-#Validation Functions
-def Date_validation(date:datetime):
-    if date > datetime.date.today():
-        raise ValidationError(_("Data nie może być nowsza niż dzisiejsza data."))
-
-=======
 
 #Validation Functions
 def Date_validation(date:datetime):
     if date > datetime.date.today():
         raise ValidationError(_("Data nie może być nowsza niż dzisiejsza data."))
 
->>>>>>> origin/main
+
 def Price_validation(price):
     if price < 0:
         raise ValidationError(_("Cena nie może być wartością ujemną."))
@@ -23,13 +16,9 @@ def Price_validation(price):
     if round(price, 2) != price:
         raise ValidationError(_("Cena może być sprecyzowana do jednego grosza."))
 
-<<<<<<< HEAD
+
 def Name_validation(name: str):
     x = str(name).replace(" ", "")
-=======
-def Name_validation(name:str):
-    x = name.replace(" ", "")
->>>>>>> origin/main
     if not x.isalpha():
         raise ValidationError(_("Dane mogą zwierać tylko litery."))
 
@@ -51,12 +40,13 @@ class Book(models.Model):
 
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
-    client_client = models.ForeignKey('Client', on_delete=models.SET_NULL, null=True)
-    book_book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
+    book_info = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     purchase_date = models.DateField(validators=[Date_validation])
+    owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.client_client.title
+        return self.owner
+
 
 class Author(models.Model):
     author_id = models.AutoField(primary_key=True)
@@ -66,6 +56,7 @@ class Author(models.Model):
     def __str__(self):
         return self.name + ' ' + self.last_name
 
+
 class Client(models.Model):
     client_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=45, validators=[Name_validation])
@@ -74,8 +65,12 @@ class Client(models.Model):
     city = models.CharField(max_length=45, validators=[Name_validation])
     address = models.CharField(max_length=100)
 
+    class Meta:
+        ordering = ('last_name',)
+
     def __str__(self):
         return self.name
+
 
 class Section(models.Model):
     section_id = models.AutoField(primary_key=True)
@@ -84,11 +79,9 @@ class Section(models.Model):
     def __str__(self):
         return self.section_name
 
+
 class Genre(models.Model):
     genre_id = models.AutoField(primary_key=True)
     genre = models.CharField(max_length=50, validators=[Name_validation])
     def __str__(self):
-        return self.genre
-    
-    def __str__(self) -> str:
         return self.genre

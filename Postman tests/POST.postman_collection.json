@@ -1,0 +1,107 @@
+{
+	"info": {
+		"_postman_id": "01981afd-a3bb-4d65-9561-711c653af3f7",
+		"name": "POST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25122699"
+	},
+	"item": [
+		{
+			"name": "POST Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Wiedzmin\",\r\n    \"author\": \"Sapkowski\",\r\n    \"price\": 12,\r\n    \"publisher\": \"PWN\",\r\n    \"genre_genre\": \"Fantasy\",\r\n    \"number_of_copies\": 50,\r\n    \"year_of_publication\": \"2023-01-02\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Books/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Books",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Author",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Adolf\",\r\n    \"last_name\": \"Grechuta\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Authors/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Authors",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

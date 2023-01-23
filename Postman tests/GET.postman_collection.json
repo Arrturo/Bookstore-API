@@ -1,0 +1,274 @@
+{
+	"info": {
+		"_postman_id": "10598028-2b98-4ab9-b359-75fe08a5103c",
+		"name": "GET",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25122699"
+	},
+	"item": [
+		{
+			"name": "GET Main",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Authors",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Content-Type is present\", function () {\r",
+							"    pm.response.to.have.header(\"Content-Type\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Authors/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Authors",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Genres",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Genres/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Genres",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Books/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Books",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{url}}/Orders/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Orders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Clients",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set('testClient1', 'Hello');\r",
+							"pm.globals.get('testClient1');\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response time is less than 300ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-CSRFToken",
+						"value": "53fCNgCPlXmMIOg1QzpVq8EcnwOmL2Qw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "csrfmiddlewaretoken",
+							"value": "53fCNgCPlXmMIOg1QzpVq8EcnwOmL2Qw",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/Clients/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Clients",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Global id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"last_name_Maciwoda\", \"Mąciwoda\");\r",
+							"pm.environment.set(\"last_name_Maciwoda\", \"Mąciwoda\");\r",
+							"pm.collectionVariables.set(\"last_name_Maciwoda\", \"Mąciwoda\");\r",
+							"\r",
+							"pm.test(\"Zmienne mają takie same wartosci\", function(){\r",
+							"    pm.expect(pm.globals.get(\"last_name_Maciwoda\")).to.equal(pm.environment.get(\"last_name_Maciwoda\"))\r",
+							"});\r",
+							"pm.environment.set(\"name_Rafal\", \"Rafał\");\r",
+							"pm.collectionVariables.set(\"author_id_5\", \"5\");\r",
+							"\r",
+							"pm.test(\"Zmienne mają takie same wartosci\", function(){\r",
+							"    pm.expect(pm.globals.get(\"last_name_Maciwoda\")).to.equal(pm.collectionVariables.get(\"last_name_Maciwoda\"))\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.collectionVariables.get(\"author_id_5\");\r",
+							"pm.environment.get(\"name_Rafal\");\r",
+							"pm.globals.get(\"last_name_Maciwoda\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Authors/{{author_Sapkowski}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Authors",
+						"{{author_Sapkowski}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "author_id_5",
+			"value": ""
+		},
+		{
+			"key": "last_name_Maciwoda",
+			"value": ""
+		}
+	]
+}

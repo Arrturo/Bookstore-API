@@ -1,0 +1,131 @@
+{
+	"info": {
+		"_postman_id": "077e0fa3-aed2-411c-af6a-9673a5935d71",
+		"name": "PUT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25122699"
+	},
+	"item": [
+		{
+			"name": "PUT Author",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Maciek\",\r\n    \"last_name\": \"Olechowski\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Authors/2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Authors",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT Book",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"price_25\", 25);\r",
+							"pm.collectionVariables.set(\"publisher_PWN\", \"PWN\");\r",
+							"pm.collectionVariables.set(\"copies_number_100\", 100);\r",
+							"pm.collectionVariables.set(\"genre_fantasy\", \"Fantasy\");\r",
+							"// pm.collectionVariables.unset(\"vgenre_fantasy\");\r",
+							"\r",
+							"pm.test(\"Response time is less than 300ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"author\": \"Sapkowski\",\r\n    \"title\": \"{{book_title}}\",\r\n    \"price\": \"{{price_25}}\",\r\n    \"publisher\": \"{{publisher_PWN}}\",\r\n    \"genre_genre\": \"{{genre_fantasy}}\",\r\n    \"number_of_copies\": \"{{copies_number_100}}\",\r\n    \"year_of_publication\": \"2022-11-10\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Books/4",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Books",
+						"4"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "price_25",
+			"value": ""
+		},
+		{
+			"key": "publisher_PWN",
+			"value": ""
+		},
+		{
+			"key": "copies_number_100",
+			"value": ""
+		},
+		{
+			"key": "genre_fantasy",
+			"value": ""
+		}
+	]
+}
